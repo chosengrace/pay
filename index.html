@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Paying Chosen Grace Collective LLP</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      text-align: center;
+      padding: 40px 20px;
+      background-color: #f9f9fb;
+      color: #333;
+    }
+    .card {
+      max-width: 400px;
+      margin: 0 auto;
+      background: #ffffff;
+      padding: 30px;
+      border-radius: 16px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    }
+    .btn {
+      display: inline-block;
+      margin-top: 20px;
+      padding: 14px 28px;
+      background-color: #0b6623;
+      color: #ffffff;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 16px;
+      border-radius: 8px;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h3>Chosen Grace Collective LLP</h3>
+    <p>Opening your UPI payment app...</p>
+    <a id="payLink" class="btn" href="#">Tap here to Pay</a>
+  </div>
+
+  <script>
+    // Reads custom amount from URL parameter (e.g. ?am=1499)
+    const urlParams = new URLSearchParams(window.location.search);
+    const amount = urlParams.get('am') || '';
+
+    let upiUrl = "upi://pay?pa=biz.chosengr126@fbl&pn=CHOSEN%20GRACE%20COLLECTIVE%20LLP&cu=INR";
+    if (amount) {
+      upiUrl += "&am=" + encodeURIComponent(amount);
+    }
+
+    // Set button link and auto-trigger redirect
+    document.getElementById('payLink').href = upiUrl;
+    window.location.href = upiUrl;
+  </script>
+</body>
+</html>
