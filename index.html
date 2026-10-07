@@ -14,23 +14,23 @@
       margin: 0;
     }
     .card {
-      max-width: 400px;
+      max-width: 380px;
       margin: 0 auto;
       background: #ffffff;
       padding: 24px;
       border-radius: 16px;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+      box-shadow: 0 4px 16px rgba(0,0,0,0.06);
     }
-    h2 { margin: 8px 0 4px; font-size: 20px; color: #111; }
+    h2 { margin: 0 0 6px; font-size: 19px; color: #111; }
     .vpa-box {
-      background: #eef2f6;
+      background: #f1f4f8;
       padding: 10px 14px;
       border-radius: 8px;
       font-family: monospace;
       font-size: 15px;
       font-weight: 600;
       color: #1a365d;
-      margin: 14px 0;
+      margin: 16px 0;
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -59,16 +59,15 @@
     .phonepe { background-color: #5f259f; }
     .gpay { background-color: #1a73e8; }
     .paytm { background-color: #00b9f5; }
-    .generic { background-color: #10b981; }
-    .qr-container { margin-top: 20px; border-top: 1px solid #eee; padding-top: 16px; }
-    .qr-img { width: 180px; height: 180px; border-radius: 8px; }
+    .qr-container { margin-top: 18px; border-top: 1px solid #eee; padding-top: 14px; }
+    .qr-img { width: 170px; height: 170px; border-radius: 8px; }
   </style>
 </head>
 <body>
 
   <div class="card">
     <h2>Chosen Grace Collective LLP</h2>
-    <p style="color: #666; font-size: 14px; margin-top: 0;">Select your preferred UPI app to pay</p>
+    <p style="color: #666; font-size: 13px; margin: 0 0 10px;">Select your preferred UPI app to pay</p>
 
     <!-- Tap to Copy UPI ID -->
     <div class="vpa-box">
@@ -76,15 +75,14 @@
       <button class="copy-btn" onclick="copyUPI()">Copy</button>
     </div>
 
-    <!-- Direct App Buttons -->
+    <!-- Direct App Links (Avoids WhatsApp Hijacking) -->
     <a id="phonepeBtn" class="app-btn phonepe" href="#">Pay via PhonePe</a>
     <a id="gpayBtn" class="app-btn gpay" href="#">Pay via Google Pay</a>
     <a id="paytmBtn" class="app-btn paytm" href="#">Pay via Paytm</a>
-    <a id="genericBtn" class="app-btn generic" href="#">Other UPI App</a>
 
     <!-- Dynamic QR Display -->
     <div class="qr-container">
-      <p style="font-size: 13px; color: #555; margin-bottom: 8px;">Or scan QR code to pay:</p>
+      <p style="font-size: 12px; color: #555; margin-bottom: 8px;">Or scan QR code to pay:</p>
       <img id="qrImg" class="qr-img" src="" alt="UPI QR Code">
     </div>
   </div>
@@ -93,37 +91,23 @@
     const vpa = "biz.chosengr126@fbl";
     const name = encodeURIComponent("CHOSEN GRACE COLLECTIVE LLP");
     
-    // Read optional amount query param (e.g. ?am=1499)
+    // Read optional ?am= parameter
     const urlParams = new URLSearchParams(window.location.search);
     const amount = urlParams.get('am') || '';
     
-    let baseUpi = `pa=${vpa}&pn=${name}&cu=INR`;
+    let baseQuery = `pa=${vpa}&pn=${name}&cu=INR`;
     if (amount) {
-      baseUpi += `&am=${encodeURIComponent(amount)}`;
+      baseQuery += `&am=${encodeURIComponent(amount)}`;
     }
 
-    const fullUpiUrl = `upi://pay?${baseUpi}`;
+    // Set intent links directly on buttons (no auto-redirect on load)
+    document.getElementById('phonepeBtn').href = `phonepe://pay?${baseQuery}`;
+    document.getElementById('gpayBtn').href = `gpay://upi/pay?${baseQuery}`;
+    document.getElementById('paytmBtn').href = `paytmmp://pay?${baseQuery}`;
 
-    // App-specific packages / intent fallbacks
-    document.getElementById('genericBtn').href = fullUpiUrl;
-    document.getElementById('phonepeBtn').href = `phonepe://pay?${baseUpi}`;
-    document.getElementById('gpayBtn').href = `gpay://upi/pay?${baseUpi}`;
-    document.getElementById('paytmBtn').href = `paytmmp://pay?${baseUpi}`;
-
-    // Fallbacks if specific app scheme isn't installed
-    const bindFallback = (id) => {
-      const el = document.getElementById(id);
-      el.addEventListener('click', () => {
-        setTimeout(() => { window.location.href = fullUpiUrl; }, 1000);
-      });
-    };
-    bindFallback('phonepeBtn');
-    bindFallback('gpayBtn');
-    bindFallback('paytmBtn');
-
-    // Dynamic QR generation
-    const qrApi = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(fullUpiUrl)}`;
-    document.getElementById('qrImg').src = qrApi;
+    // Render dynamic QR
+    const qrUrl = `upi://pay?${baseQuery}`;
+    document.getElementById('qrImg').src = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(qrUrl)}`;
 
     function copyUPI() {
       navigator.clipboard.writeText(vpa);
